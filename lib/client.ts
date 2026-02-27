@@ -34,8 +34,12 @@ export class InformDirectClient {
   private tokens: AuthTokens | null = null;
 
   constructor(config: InformDirectConfig) {
+    const url = config.baseUrl ?? BASE_URLS.sandbox;
+    if (!url.startsWith("https://")) {
+      throw new Error("baseUrl must use HTTPS");
+    }
     this.apiKey = config.apiKey;
-    this.baseUrl = (config.baseUrl ?? BASE_URLS.sandbox).replace(/\/+$/, "");
+    this.baseUrl = url.replace(/\/+$/, "");
   }
 
   // --- Authentication ---
@@ -131,7 +135,15 @@ export class InformDirectClient {
         await this.refresh();
       } catch {
         // fallback: refresh failed, try full re-authentication
-        await this.authenticate();
+        try {
+          await this.authenticate();
+        } catch (authErr) {
+          throw new AuthenticationError(
+            `Token refresh and re-authentication both failed`,
+            401,
+            authErr,
+          );
+        }
       }
       res = await attempt();
     }
@@ -154,6 +166,18 @@ export class InformDirectClient {
     return JSON.parse(text) as T;
   }
 
+  // --- Validation ---
+
+  /** Validate UK company number format (8 digits, or 2-letter prefix + 6 digits). */
+  private validateCompanyNumber(companyNumber: string): void {
+    if (!/^([A-Z]{2}\d{6}|\d{8})$/.test(companyNumber)) {
+      throw new InformDirectError(
+        `Invalid company number "${companyNumber}" — expected 8 digits or 2-letter prefix + 6 digits (e.g. 00014259, SC123456)`,
+        0,
+      );
+    }
+  }
+
   // --- Company endpoints ---
 
   /** List all companies in the portfolio. */
@@ -164,6 +188,7 @@ export class InformDirectClient {
 
   /** Get a single company by Companies House number. */
   async getCompany(companyNumber: string): Promise<CompanySummary | null> {
+    this.validateCompanyNumber(companyNumber);
     const data = await this.request<CompaniesResponse>(
       `/companies/${encodeURIComponent(companyNumber)}`,
     );
@@ -175,6 +200,7 @@ export class InformDirectClient {
     companyNumber: string,
     authenticationCode?: string,
   ): Promise<MessageResponse> {
+    this.validateCompanyNumber(companyNumber);
     const body: AddCompanyRequest = { CompanyNumber: companyNumber };
     if (authenticationCode) {
       body.AuthenticationCode = authenticationCode;
@@ -190,6 +216,7 @@ export class InformDirectClient {
     companyNumber: string,
     options?: { saveRegisters?: boolean; saveDocuments?: boolean },
   ): Promise<MessageResponse> {
+    this.validateCompanyNumber(companyNumber);
     const body: DeleteCompanyRequest = {
       CompanyNumber: companyNumber,
       SaveRegisters: options?.saveRegisters,

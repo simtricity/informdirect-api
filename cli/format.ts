@@ -24,6 +24,6 @@ export function formatCompanyTable(companies: CompanySummary[]): void {
 
 /** Print masked token info. */
 export function formatTokenInfo(tokens: AuthTokens): void {
-  console.log(`  Access token  : ...${tokens.AccessToken.slice(-10)}`);
-  console.log(`  Refresh token : ...${tokens.RefreshToken.slice(-10)}`);
+  console.log(`  Access token  : ...${tokens.AccessToken.slice(-6)}`);
+  console.log(`  Refresh token : ...${tokens.RefreshToken.slice(-6)}`);
 }

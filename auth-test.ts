@@ -29,20 +29,19 @@ console.log("1. POST /authenticate");
 const authRes = await fetch(`${BASE_URL}/authenticate`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ apiKey: API_KEY }),
+  body: JSON.stringify({ ApiKey: API_KEY }),
 });
 
 console.log(`   Status: ${authRes.status} ${authRes.statusText}`);
 
 if (!authRes.ok) {
-  const body = await authRes.text();
-  console.error(`   Auth failed: ${body.slice(0, 500)}`);
+  console.error(`   Auth failed: ${authRes.status} ${authRes.statusText}`);
   Deno.exit(1);
 }
 
 const authBody = await authRes.json();
-const accessToken: string = authBody.AccessToken ?? authBody.accessToken ?? authBody.access_token;
-const refreshToken: string = authBody.RefreshToken ?? authBody.refreshToken ?? authBody.refresh_token ?? "";
+const accessToken: string = authBody.AccessToken;
+const refreshToken: string = authBody.RefreshToken ?? "";
 
 if (!accessToken) {
   console.error("   No access token in response. Full body:");
@@ -50,8 +49,8 @@ if (!accessToken) {
   Deno.exit(1);
 }
 
-console.log(`   Access token  : ...${accessToken.slice(-10)}`);
-console.log(`   Refresh token : ...${refreshToken.slice(-10)}`);
+console.log(`   Access token  : ...${accessToken.slice(-6)}`);
+console.log(`   Refresh token : ...${refreshToken.slice(-6)}`);
 console.log(`   Auth succeeded!\n`);
 
 // --- Step 2: Quick smoke test — list companies ------------------------------
