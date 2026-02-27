@@ -1,0 +1,18 @@
+{
+  "name": "@simtricity/informdirect",
+  "version": "0.1.0",
+  "license": "MIT",
+  "exports": "./mod.ts",
+  "exclude": ["tests/", "cli/", "auth-test.ts", ".env.example", ".github/"],
+  "tasks": {
+    "cli": "deno run --allow-net --allow-env --allow-read cli/mod.ts",
+    "test:sandbox": "deno run --allow-net --allow-env --allow-read tests/sandbox-test.ts",
+    "check": "deno check mod.ts cli/mod.ts tests/sandbox-test.ts"
+  },
+  "imports": {
+    "@std/dotenv": "jsr:@std/dotenv@^0.225.6",
+    "@std/dotenv/load": "jsr:@std/dotenv@0.225.6/load",
+    "@std/cli": "jsr:@std/cli@^1.0.17",
+    "@std/cli/parse-args": "jsr:@std/cli@1.0.17/parse-args"
+  }
+}
