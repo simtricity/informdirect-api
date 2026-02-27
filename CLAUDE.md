@@ -6,15 +6,19 @@ Typed Deno client library + CLI for the Inform Direct Integration API (UK compan
 
 - `lib/` — Reusable library (client, types, errors). No env/dotenv deps — safe for webapp import.
 - `cli/` — CLI tool that wraps the library. Loads `.env` and parses args.
-- `tests/` — Sandbox compliance test runner.
+- `tests/` — Unit tests, production-safe tests, and sandbox compliance test runner.
+- `examples/` — Runnable examples (library client + raw fetch).
 - `mod.ts` — Top-level barrel export for the library.
 
 ## Key Commands
 
 ```bash
-deno task check          # Type-check all entry points
-deno task cli <command>  # Run CLI (see deno task cli --help)
-deno task test:sandbox   # Run 4-step sandbox compliance test
+deno task check              # Type-check all entry points
+deno task cli <command>      # Run CLI — production by default (see deno task cli --help)
+deno task cli --sandbox <command>  # Run CLI against sandbox
+deno test tests/unit-test.ts # Offline unit tests (no API key needed)
+deno task test:prod          # Read-only tests against production
+deno task test:sandbox       # 4-step sandbox compliance test (adds/removes a company)
 ```
 
 ## Inform Direct API
@@ -36,9 +40,10 @@ deno task test:sandbox   # Run 4-step sandbox compliance test
 
 ## Environment Variables
 
-- `INFORM_DIRECT_API_KEY` — required, stored in `.env` (gitignored)
-- `INFORM_DIRECT_BASE_URL` — optional, defaults to sandbox
+- `INFORM_DIRECT_API_KEY` — production API key (used by CLI default and `test:prod`)
+- `INFORM_DIRECT_SANDBOX_API_KEY` — sandbox API key (used by CLI `--sandbox` and `test:sandbox`)
 - `TEST_COMPANY_NUMBER` — optional, defaults to `00014259` for sandbox tests
+- Both keys stored in `.env` (gitignored)
 
 ## Publishing
 

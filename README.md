@@ -35,17 +35,17 @@ Or add to your `deno.json`:
 git clone https://github.com/simtricity/informdirect-api.git
 cd informdirect-api
 cp .env.example .env
-# Edit .env with your API key
+# Edit .env with your API keys
 ```
 
 ## Library Usage
 
 ```ts
-import { InformDirectClient } from "@simtricity/informdirect";
+import { InformDirectClient, BASE_URLS } from "@simtricity/informdirect";
 
 const client = new InformDirectClient({
   apiKey: "your-api-key",
-  // baseUrl defaults to sandbox; set to BASE_URLS.production for live
+  baseUrl: BASE_URLS.production, // or BASE_URLS.sandbox for testing
 });
 
 // List all companies
@@ -73,19 +73,26 @@ await client.logout();
 
 Authentication is lazy — the first API call triggers it automatically. If a request returns 401, the client refreshes the token (or re-authenticates as a fallback) and retries once.
 
+See `examples/` for complete runnable examples:
+- `examples/read-only.ts` — library client usage (safe for production)
+- `examples/raw-fetch.ts` — raw fetch without the library
+
 ## CLI Usage
 
-Set your API key in a `.env` file or environment variable:
+The CLI defaults to **production**. Use `--sandbox` to switch to the sandbox environment.
+
+Set your API keys in a `.env` file:
 
 ```bash
-export INFORM_DIRECT_API_KEY=your-key-here
+INFORM_DIRECT_API_KEY=your-production-key
+INFORM_DIRECT_SANDBOX_API_KEY=your-sandbox-key
 ```
 
 Then run commands via `deno task`:
 
 ```bash
-deno task cli authenticate
-deno task cli list-companies
+deno task cli list-companies                          # production
+deno task cli --sandbox list-companies                # sandbox
 deno task cli get-company -c 00014259
 deno task cli add-company -c 00014259 --auth-code ABC123
 deno task cli remove-company -c 00014259
@@ -98,20 +105,24 @@ deno task cli --help
 |---|---|---|
 | `--company` | `-c` | Company number (8 digits or prefix + 6 digits) |
 | `--auth-code` | `-a` | Authentication code (for add-company) |
-| `--base-url` | | Override API base URL |
+| `--sandbox` | | Use sandbox environment (default: production) |
 | `--save-registers` | | Save registers on removal |
 | `--save-documents` | | Save documents on removal |
 | `--help` | `-h` | Show help |
 
-## Sandbox Testing
-
-Inform Direct requires successful sandbox API calls before granting a production key. The test runner executes all four required operations:
+## Testing
 
 ```bash
-deno task test:sandbox
+deno test tests/unit-test.ts    # Offline unit tests (validation, HTTPS enforcement)
+deno task test:prod             # Read-only tests against production
+deno task test:sandbox          # Full compliance test against sandbox (adds/removes a company)
+deno task check                 # Type-check all entry points
 ```
 
-This runs:
+### Sandbox Compliance
+
+Inform Direct requires successful sandbox API calls before granting a production key. The sandbox test runner executes all four required operations:
+
 1. **Add company** — `POST /companies/add`
 2. **List companies** — `GET /companies`
 3. **Get company** — `GET /companies/{num}`
@@ -135,14 +146,6 @@ All request/response fields use PascalCase. Access tokens are valid for 15 minut
 
 - Sandbox: `https://sandbox-api.informdirect.co.uk`
 - Production: `https://api.informdirect.co.uk`
-
-## Development
-
-```bash
-deno task check          # Type-check all entry points
-deno task cli --help     # CLI help
-deno task test:sandbox   # Run sandbox compliance tests
-```
 
 ## License
 
