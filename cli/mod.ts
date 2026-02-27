@@ -16,7 +16,7 @@
  * Options:
  *   -c, --company        Company number
  *   -a, --auth-code      Authentication code (for add-company)
- *       --base-url       Override base URL
+ *       --sandbox        Use sandbox environment (default: production)
  *       --save-registers Save registers on removal
  *       --save-documents Save documents on removal
  *   -h, --help           Show this help
@@ -24,12 +24,12 @@
 
 import "@std/dotenv/load";
 import { parseArgs } from "@std/cli/parse-args";
-import { InformDirectClient } from "../lib/mod.ts";
+import { BASE_URLS, InformDirectClient } from "../lib/mod.ts";
 import * as commands from "./commands.ts";
 
 const args = parseArgs(Deno.args, {
-  string: ["company", "auth-code", "base-url"],
-  boolean: ["help", "save-registers", "save-documents"],
+  string: ["company", "auth-code"],
+  boolean: ["help", "save-registers", "save-documents", "sandbox"],
   alias: { h: "help", c: "company", a: "auth-code" },
 });
 
@@ -50,7 +50,7 @@ Commands:
 Options:
   -c, --company        Company number
   -a, --auth-code      Authentication code
-      --base-url       Override API base URL
+      --sandbox        Use sandbox environment (default: production)
       --save-registers Save registers on removal
       --save-documents Save documents on removal
   -h, --help           Show this help`);
@@ -61,18 +61,20 @@ if (!command || args.help) {
   Deno.exit(0);
 }
 
-const apiKey = Deno.env.get("INFORM_DIRECT_API_KEY");
+const sandbox = args.sandbox;
+const envKeyName = sandbox
+  ? "INFORM_DIRECT_SANDBOX_API_KEY"
+  : "INFORM_DIRECT_API_KEY";
+const apiKey = Deno.env.get(envKeyName);
 if (!apiKey) {
-  console.error(
-    "Error: INFORM_DIRECT_API_KEY not set in environment or .env file",
-  );
+  console.error(`Error: ${envKeyName} not set in environment or .env file`);
   Deno.exit(1);
 }
 
-const client = new InformDirectClient({
-  apiKey,
-  baseUrl: args["base-url"] || Deno.env.get("INFORM_DIRECT_BASE_URL"),
-});
+const baseUrl = sandbox ? BASE_URLS.sandbox : BASE_URLS.production;
+console.log(`[${sandbox ? "SANDBOX" : "PRODUCTION"}] ${baseUrl}\n`);
+
+const client = new InformDirectClient({ apiKey, baseUrl });
 
 try {
   switch (command) {

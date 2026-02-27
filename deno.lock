@@ -1,19 +1,33 @@
 {
   "version": "5",
   "specifiers": {
+    "jsr:@std/assert@^1.0.19": "1.0.19",
     "jsr:@std/cli@1.0.17": "1.0.17",
-    "jsr:@std/dotenv@0.225.6": "0.225.6"
+    "jsr:@std/cli@^1.0.17": "1.0.17",
+    "jsr:@std/dotenv@0.225.6": "0.225.6",
+    "jsr:@std/dotenv@~0.225.6": "0.225.6",
+    "jsr:@std/internal@^1.0.12": "1.0.12"
   },
   "jsr": {
+    "@std/assert@1.0.19": {
+      "integrity": "eaada96ee120cb980bc47e040f82814d786fe8162ecc53c91d8df60b8755991e",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
     "@std/cli@1.0.17": {
       "integrity": "e15b9abe629e17be90cc6216327f03a29eae613365f1353837fa749aad29ce7b"
     },
     "@std/dotenv@0.225.6": {
       "integrity": "1d6f9db72f565bd26790fa034c26e45ecb260b5245417be76c2279e5734c421b"
+    },
+    "@std/internal@1.0.12": {
+      "integrity": "972a634fd5bc34b242024402972cd5143eac68d8dffaca5eaa4dba30ce17b027"
     }
   },
   "workspace": {
     "dependencies": [
+      "jsr:@std/assert@^1.0.19",
       "jsr:@std/cli@1.0.17",
       "jsr:@std/cli@^1.0.17",
       "jsr:@std/dotenv@0.225.6",

@@ -93,11 +93,12 @@ export class InformDirectClient {
   async logout(): Promise<void> {
     if (!this.tokens?.RefreshToken) return;
 
-    await fetch(`${this.baseUrl}/logout`, {
+    const res = await fetch(`${this.baseUrl}/logout`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ RefreshToken: this.tokens.RefreshToken }),
     });
+    await res.body?.cancel();
 
     this.tokens = null;
   }
