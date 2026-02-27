@@ -33,6 +33,7 @@ export class InformDirectClient {
   private readonly baseUrl: string;
   private tokens: AuthTokens | null = null;
 
+  /** Create a new client with the given API key and optional base URL. */
   constructor(config: InformDirectConfig) {
     const url = config.baseUrl ?? BASE_URLS.sandbox;
     if (!url.startsWith("https://")) {

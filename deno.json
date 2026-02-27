@@ -4,7 +4,7 @@
   "license": "MIT",
   "exports": "./mod.ts",
   "publish": {
-    "exclude": ["tests/", "cli/", "examples/", ".env.example", ".github/"]
+    "exclude": ["tests/", "cli/", "examples/", ".env.example", ".github/", "CLAUDE.md", "INFORMDIRECT_SANDBOX_TESTING.md"]
   },
   "tasks": {
     "cli": "deno run --allow-net --allow-env --allow-read cli/mod.ts",
