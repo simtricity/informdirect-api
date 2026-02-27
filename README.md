@@ -16,7 +16,7 @@ A typed Deno client library and CLI for the [Inform Direct](https://www.informdi
 ### As a Deno dependency
 
 ```ts
-import { InformDirectClient } from "jsr:@simtricity/informdirect";
+import { InformDirectClient } from "jsr:@simtricity/informdirect-api";
 ```
 
 Or add to your `deno.json`:
@@ -24,7 +24,7 @@ Or add to your `deno.json`:
 ```json
 {
   "imports": {
-    "@simtricity/informdirect": "jsr:@simtricity/informdirect@^0.1.0"
+    "@simtricity/informdirect-api": "jsr:@simtricity/informdirect-api@^0.1.0"
   }
 }
 ```
@@ -41,7 +41,7 @@ cp .env.example .env
 ## Library Usage
 
 ```ts
-import { InformDirectClient, BASE_URLS } from "@simtricity/informdirect";
+import { InformDirectClient, BASE_URLS } from "@simtricity/informdirect-api";
 
 const client = new InformDirectClient({
   apiKey: "your-api-key",

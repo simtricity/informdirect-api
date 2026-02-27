@@ -1,4 +1,4 @@
-# @simtricity/informdirect
+# @simtricity/informdirect-api
 
 Typed Deno client library + CLI for the Inform Direct Integration API (UK company secretarial platform).
 
@@ -47,7 +47,7 @@ deno task test:sandbox       # 4-step sandbox compliance test (adds/removes a co
 
 ## Publishing
 
-- Package: `@simtricity/informdirect` on JSR
+- Package: `@simtricity/informdirect-api` on JSR
 - License: MIT
 - GitHub Actions workflow at `.github/workflows/publish.yml` triggers on `v*` tags
 - **Do not publish or push version tags without Damon's explicit authorisation**
